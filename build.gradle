@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+sourceCompatibility=15
+targetCompatibility=15
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+application {
+    mainClass.set("com.example.HelloBarbara")
+}
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testImplementation('junit:junit:4.12')
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events ("passed", "skipped", "failed")
+    }
+
+    tasks.withType(Test) {
+        doLast {
+            File file = file("$buildDir/reports/tests/test/index.html")
+            java.awt.Desktop.desktop.browse file.toURI()
+        }
+    }
+
+}
+jar {
+        manifest{
+            attributes ("Implementation-Titel" : "<title>",
+                    "Main-Class" : "com.example.HelloBarbara")
+        }
+
+    task HelloBarbara (type: JavaExec) {
+        dependsOn jar
+        classpath = files(["build/libs/GradleApp.jar"])
+        main = "com.example.HelloBarbara"
+    }
+}
